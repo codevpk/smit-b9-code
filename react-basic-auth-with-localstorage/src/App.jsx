@@ -7,7 +7,7 @@ import { ConfigProvider } from "antd"
 const App = () => {
   return (
     <>
-      <ConfigProvider theme={{ token: { colorPrimary: "#1d3557" }, components: { Button: { controlOutline: 0 } } }}>
+      <ConfigProvider theme={{ token: { colorPrimary: "#1d3557" }, components: { Button: { controlOutline: 0, primaryShadow: "none" } } }}>
         <Routes />
       </ConfigProvider>
     </>

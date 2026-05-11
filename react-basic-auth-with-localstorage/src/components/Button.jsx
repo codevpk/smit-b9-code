@@ -1,5 +1,5 @@
 const Button = (props) => {
-    console.log('props', props)
+    // console.log('props', props)
     const { type = "dark", variant, text = "Button" } = props
     return (
         <button className={`btn btn-${variant ? variant + "-" : ""}${type}`}>{text}</button>

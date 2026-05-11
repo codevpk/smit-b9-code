@@ -7,6 +7,7 @@ import PageNotFound from "@/components/PageNotFound"
 import Home from "./Home"
 import About from "./About"
 import Contact from "./Contact"
+import Hooks from "./Hooks"
 
 const Frontend = () => {
     return (
@@ -16,6 +17,7 @@ const Frontend = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="about" element={<About />} />
                 <Route path="contact" element={<Contact />} />
+                <Route path="hooks/*" element={<Hooks />} />
                 <Route path="*" element={<PageNotFound />} />
             </Routes>
             <Footer />
