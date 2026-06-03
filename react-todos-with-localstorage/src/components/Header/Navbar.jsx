@@ -1,11 +1,42 @@
+import { Avatar, Dropdown, Space } from 'antd'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/Auth'
-import { Space } from 'antd'
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { LogoutOutlined, DashboardOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 
 const Navbar = () => {
 
-    const { isAuth } = useAuth()
+    const { isAuth, user, handleLogout } = useAuth()
+
+    const navigate = useNavigate()
+
+    const items = [
+        {
+            key: '0',
+            label: user.fullName,
+        },
+        {
+            key: '1',
+            label: 'Dashboard',
+            icon: <DashboardOutlined />,
+            onClick: () => navigate("/dashboard")
+        },
+        {
+            key: '2',
+            label: 'Settings',
+            icon: <SettingOutlined />,
+            onClick: () => navigate("/dashboard/account/settings")
+        },
+        {
+            type: 'divider',
+        },
+        {
+            key: '3',
+            label: 'Logout',
+            icon: <LogoutOutlined />,
+            danger: true,
+            onClick: handleLogout
+        },
+    ]
 
     return (
         <header>
@@ -32,8 +63,14 @@ const Navbar = () => {
                                         <Link to="/auth/register" className="btn btn-info">Register</Link>
                                     </>
                                     : <>
-                                        <Link to="/dashboard" className="btn btn-info">Dashboard</Link>
-                                        <button className="btn btn-danger">Logout</button>
+                                        <Dropdown menu={{ items }} trigger={['click']} placement="bottomRight">
+                                            <Avatar size={36} style={{ cursor: "pointer" }} icon={<UserOutlined />} />
+                                            {/* <Avatar style={{ cursor: "pointer", backgroundColor: "#fdf0d5", color: "black" }}>{user.fullName[0]}</Avatar> */}
+                                            {/* <Avatar style={{ cursor: "pointer" }} src={<img draggable={false} src="https://umairahmad.net/img/testimonial-1.jpg" alt="avatar" />} /> */}
+                                        </Dropdown>
+                                        {/* <Text className='text-white'>Welcome, {user.fullName}!</Text> */}
+                                        {/* <Link to="/dashboard" className="btn btn-info">Dashboard</Link>
+                                        <button className="btn btn-danger" onClick={handleLogout}>Logout</button> */}
                                     </>
                                 }
                             </Space>
