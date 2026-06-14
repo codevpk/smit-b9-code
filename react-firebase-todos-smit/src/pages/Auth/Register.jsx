@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Button, Col, Form, Input, Row, Typography } from 'antd'
-import { useNavigate } from 'react-router-dom'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/config/firebase'
+import { auth, firestore } from '@/config/firebase'
+import { doc, serverTimestamp, setDoc } from 'firebase/firestore'
 
 const { Title } = Typography
 const { Item } = Form
@@ -13,8 +13,6 @@ const Register = () => {
 
   const [state, setState] = useState(initialState)
   const [isProcessing, setIsProcessing] = useState(false)
-
-  const navigate = useNavigate()
 
   const handleChange = e => setState(s => ({ ...s, [e.target.name]: e.target.value }))
 
@@ -30,34 +28,38 @@ const Register = () => {
     if (confirmPassword !== password) { return window.toastify("Password not match", "error") }
 
     const user = {
-      id: window.getRandomId(),
       fullName, email, password,
       status: "active",
       role: "student",
-      createdAt: Date.now(),
+      createdAt: serverTimestamp(),
     }
-
-    console.log('user', user)
 
     setIsProcessing(true)
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        const user = userCredential.user;
-        console.log('user', user)
+        const authUser = userCredential.user;
+        user.id = authUser.uid
+        createProfile(user)
         window.toastify("A new user has been successfully registered.", "success")
       })
       .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log('error', error)
-        console.log('errorCode', errorCode)
-        console.log('errorMessage', errorMessage)
+        console.error('error', error)
         window.toastify("User not registered.", "error")
-      })
-      .finally(() => {
         setIsProcessing(false)
       })
+  }
+
+  const createProfile = async (user) => {
+    try {
+      await setDoc(doc(firestore, "users", user.id), user)
+      window.toastify("User profile created.", "success")
+    } catch (error) {
+      console.error('error', error)
+      window.toastify("User profile not created.", "error")
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   return (

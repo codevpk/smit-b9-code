@@ -1,5 +1,6 @@
-import { auth } from "@/config/firebase"
+import { auth, firestore } from "@/config/firebase"
 import { onAuthStateChanged, signOut } from "firebase/auth"
+import { doc, getDoc } from "firebase/firestore"
 import { createContext, useContext, useEffect, useReducer, useState } from "react"
 
 const AuthContext = createContext()
@@ -24,15 +25,20 @@ const Auth = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
     const [isAppLoading, setIsAppLoading] = useState(true)
 
-    const readProfile = () => {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                dispatch({ type: "SET_LOGIN", payload: { user } })
-            }
-            setIsAppLoading(false)
-        })
+    const readProfile = async (user) => {
+        const docSnap = await getDoc(doc(firestore, "users", user.uid));
+        if (docSnap.exists()) {
+            const user = docSnap.data()
+            dispatch({ type: "SET_LOGIN", payload: { user } })
+        }
+        setIsAppLoading(false)
     }
-    useEffect(() => { readProfile() }, [])
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) { readProfile(user) }
+            else { setIsAppLoading(false) }
+        })
+    }, [])
 
     const handleLogout = () => {
         signOut(auth)
