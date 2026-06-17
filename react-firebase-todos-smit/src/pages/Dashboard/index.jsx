@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { Layout, Menu, Typography } from 'antd';
 import { items } from "./MenuItems"
 import Routes from "./Routes"
+import { useAuth } from '@/context/Auth';
 
 const { Header, Content, Footer, Sider } = Layout;
 const { Title } = Typography
 
 const Dashboard = () => {
+
+    const { user } = useAuth()
 
     const [collapsed, setCollapsed] = useState(false);
 
@@ -21,7 +24,11 @@ const Dashboard = () => {
                 <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
             </Sider>
             <Layout>
-                <Header className='p-0 bg-white' style={{ height: 60 }} />
+                <Header className='p-0 px-4 bg-white d-flex align-items-center justify-content-end' style={{ height: 60 }}>
+                    <Typography.Title level={5}>
+                        {user.email}
+                    </Typography.Title>
+                </Header>
                 <Content className='p-3 pb-0'>
                     <div className="card p-3 border-0 h-100">
                         <Routes />

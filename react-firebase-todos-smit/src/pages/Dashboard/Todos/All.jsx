@@ -1,6 +1,6 @@
 import { firestore } from '@/config/firebase'
 import { useAuth } from '@/context/Auth'
-import { Button, Col, Row, Space, Tag, Typography } from 'antd'
+import { Button, Col, Image, Row, Space, Tag, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { collection, deleteDoc, doc, getDocs, orderBy, query, serverTimestamp, setDoc, where } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
@@ -92,7 +92,8 @@ const All = () => {
                                 <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Created By</th>
+                                        {/* <th>Created By</th> */}
+                                        <th>Image</th>
                                         <th>Title</th>
                                         <th>Location</th>
                                         <th>Description</th>
@@ -108,7 +109,8 @@ const All = () => {
                                         return (
                                             <tr key={i}>
                                                 <th>{i + 1}</th>
-                                                <td>{todo.uid}</td>
+                                                {/* <td>{todo.uid}</td> */}
+                                                <td>{todo.imageURL && <Image src={todo.imageURL} width={64} className='rounded-circle shadow' />}</td>
                                                 <td>{todo.title}</td>
                                                 <td>{todo.location}</td>
                                                 <td>{todo.description}</td>
