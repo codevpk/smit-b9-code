@@ -1,18 +1,22 @@
+require("dotenv").config()
 const express = require("express")
-const app = express()
+const { connectToMongoDB } = require("./config/db")
 
 const todos = require("./routes/todos")
 
+const app = express()
 app.use(express.json())
 
-app.get("/healthcheck", (req, res) => {
+connectToMongoDB()
+
+app.get("/", (req, res) => {
     const now = new Date()
-    res.send(`Date: ${now.toUTCString()}, Server is running on PORT: ${PORT}`)
+    res.send(`Current time: ${now.toUTCString()}. SERVER is running on PORT: ${PORT}`)
 })
 
 app.use("/todos", todos)
 
-const PORT = 8000
-app.listen(PORT, (req, res) => {
-    console.log(`Server is running on PORT: ${PORT}`)
+const { PORT = 8000 } = process.env
+app.listen(PORT, () => {
+    console.log(`SERVER is running on PORT: ${PORT}`)
 })

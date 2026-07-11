@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "todos-server",
   "version": "1.0.0",
   "description": "",
   "license": "ISC",
@@ -12,7 +12,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "mongoose": "^9.7.4",
     "nodemon": "^3.1.14"
   }
 }
