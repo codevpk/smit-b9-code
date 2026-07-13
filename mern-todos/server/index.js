@@ -2,6 +2,7 @@ require("dotenv").config()
 const express = require("express")
 const { connectToMongoDB } = require("./config/db")
 
+const auth = require("./routes/auth")
 const todos = require("./routes/todos")
 
 const app = express()
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
     res.send(`Current time: ${now.toUTCString()}. SERVER is running on PORT: ${PORT}`)
 })
 
+app.use("/auth", auth)
 app.use("/todos", todos)
 
 const { PORT = 8000 } = process.env
