@@ -3,7 +3,7 @@ const { Schema } = mongoose;
 
 const scehma = new Schema({
     id: { type: String, required: true, unique: true },
-    uid: { type: String, default: "123" },
+    uid: { type: String, required: true },
     title: { type: String, required: true },
     location: { type: String },
     description: { type: String },

@@ -14,12 +14,12 @@ router.post("/register", async (req, res) => {
 
         const { fullName = "", email = "", password = "" } = req.body
 
-        if (fullName.length < 3) { return res.status(400).json({ message: "Full name isn't correct", isError: true }) }
-        if (!isValidEmail(email)) { return res.status(400).json({ message: "Email address isn't valid", isError: true }) }
-        if (password.length < 6) { return res.status(400).json({ message: "Password must be minimum 6 chars.", isError: true }) }
+        if (fullName.length < 3) { return res.status(403).json({ message: "Full name isn't correct", isError: true }) }
+        if (!isValidEmail(email)) { return res.status(403).json({ message: "Email address isn't valid", isError: true }) }
+        if (password.length < 6) { return res.status(403).json({ message: "Password must be minimum 6 chars.", isError: true }) }
 
         const isUserExists = await Users.findOne({ email })
-        if (isUserExists) { return res.status(400).json({ message: "User already exists", isError: true }) }
+        if (isUserExists) { return res.status(403).json({ message: "User already exists", isError: true }) }
 
         const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
 
         const { email = "", password = "" } = req.body
 
-        if (!isValidEmail(email)) { return res.status(400).json({ message: "Email address isn't valid", isError: true }) }
+        if (!isValidEmail(email)) { return res.status(403).json({ message: "Email address isn't valid", isError: true }) }
 
         const user = await Users.findOne({ email })
         if (!user) { return res.status(404).json({ message: "Invalid credentials", isError: true }) }
@@ -50,7 +50,7 @@ router.post("/login", async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) { return res.status(404).json({ message: "Invalid credentials", isError: true }) }
 
-        const token = jwt.sign({ uid: user.uid }, JWT_SECRET_KEY, { expiresIn: 10 })
+        const token = jwt.sign({ uid: user.uid }, JWT_SECRET_KEY, { expiresIn: "1d" })
 
         return res.status(200).json({ message: "Login successful", token })
 

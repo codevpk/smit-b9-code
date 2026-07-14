@@ -1,18 +1,46 @@
 const express = require("express")
-const { getRandomId } = require("../utils/global")
+const streamifier = require("streamifier")
+const { verifyUser } = require("../middlewares/auth")
+const upload = require("../middlewares/upload")
+const cloudinary = require("../config/cloudinary")
 const Todos = require("../models/todos")
+
+const { getRandomId } = require("../utils/global")
 
 const router = express.Router()
 
-router.post("/create", async (req, res) => {
+router.post("/create", verifyUser, upload.single("file"), async (req, res) => {
     try {
-        const { title = "", location = "", description = "", dueDate = "" } = req.body
+
+        const { uid } = req.user
+
+        const { title = "", location = "", description = "", dueDate = "", status = "", visibility = "" } = req.body
 
         if (!title || !location || !description || !dueDate) {
             return res.status(400).json({ message: "All fields are required", isError: true })
         }
 
-        const todoData = { title, location, description, dueDate }
+        let fileUrl = "", publicId = "";
+        if (req.file) {
+            const uploadResult = await new Promise((resolve, reject) => {
+
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: "todos", resource_type: "auto" },
+                    (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result);
+                    }
+                )
+                streamifier.createReadStream(req.file.buffer).pipe(stream);
+            })
+            fileUrl = uploadResult.secure_url;
+            publicId = uploadResult.public_id;
+        }
+
+        const todoData = {
+            uid, title, location, description, dueDate, status, visibility,
+            image: { url: fileUrl, publicId }
+        }
         todoData.id = getRandomId()
 
         const todo = new Todos(todoData)
